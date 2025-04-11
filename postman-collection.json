@@ -1,0 +1,101 @@
+{
+    "info": {
+      "_postman_id": "b2301f43-5f5f-4d8b-b65d-fc194b29ab7d",
+      "name": "Bedtime Story Teller Microservices",
+      "description": "Collection to test Story, TTS, and Image services locally",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Generate Story",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"prompt\": \"first day of school\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3001/generate-story",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "3001",
+            "path": [
+              "generate-story"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Text to Speech",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"text\": \"Once upon a time, there was a young kid who loved school.\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3002/text-to-speech",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "3002",
+            "path": [
+              "text-to-speech"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Generate Image",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"prompt\": \"a colorful school building with children\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3003/generate-image",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "3003",
+            "path": [
+              "generate-image"
+            ]
+          }
+        },
+        "response": []
+      }
+    ]
+  }
+  
