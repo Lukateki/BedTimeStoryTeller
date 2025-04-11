@@ -29,10 +29,10 @@ Bedtime Story Teller is a full-stack MERN (without Mongo) web application that g
 </div>
 
 
-- **Frontend**: React (Vite) <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="20" alt="React" />
-- **Backend Services** (Microservices Architecture):
+- **Frontend**: React (Vite) <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="20" alt="React" /><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" height="20" alt="Vite" />
+- **Backend Services** (Microservices Architecture):<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" height="20" alt="Node.js" />
   - Story Generation: OpenAI GPT-3.5 API <img src="https://custom.typingmind.com/assets/models/gpt-35.webp" height="20" alt="OpenAI" />
-  - Text-to-Speech: Google Cloud TTS API <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" height="40" alt="Google Cloud" />
+  - Text-to-Speech: Google Cloud TTS API <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" height="20" alt="Google Cloud" />
   - Image Generation: OpenAI DALL-E API <img src="https://custom.typingmind.com/assets/models/gpt-35.webp" height="20" alt="OpenAI" />
 - **Containerization**: Docker <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="20" alt="Docker" />
 - **Orchestration**: Docker Compose <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="20" alt="Docker" />
