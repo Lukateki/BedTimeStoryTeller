@@ -5,7 +5,8 @@ export default function OpenBook({ story }) {
   const { title, chapters, coverImageUrl, audioContent, genre, ageGroup } = story
   // page 0 = cover spread, page 1..N = chapter spreads
   const totalPages = chapters.length
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(-1)
+  const [opened, setOpened] = useState(false)
   const [flipping, setFlipping] = useState(false)
 
   const turnPage = (dir) => {
@@ -17,19 +18,58 @@ export default function OpenBook({ story }) {
   }
 
   // Cover spread
-  const isCover = page === 0
-  const chapter = !isCover ? chapters[page - 1] : null
+  const isCover = page === -1
+  const chapter = chapters[page]
+
+  const openBook = () => {
+    if (opened) return
+    setOpened(true)
+    setTimeout(() => setPage(0), 50)
+  }
+
+  if(page === -1){
+    return (
+      <div className="book-stage">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+          <div
+            className="book-closed"
+            onClick={openBook}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className="book-spine-closed" />
+            <div className="book-cover-front">
+              {coverImageUrl
+                ? <img src={coverImageUrl} alt={title} className="cover-image-preview"
+                    style={{ width: '140px', height: '140px' }} />
+                : <div className="cover-page-drawing" style={{ width: '140px', height: '140px' }} />
+              }
+              <div className="cover-ornament" />
+              <div className="cover-title-preview">{title}</div>
+            </div>
+          </div>
+
+          <div style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '12px', fontStyle: 'italic',
+            color: 'rgba(255,255,255,0.35)',
+            letterSpacing: '1px',
+            animation: 'pulse 2.5s ease-in-out infinite',
+          }}>
+            Click the cover to begin reading
+          </div>
+
+          {audioContent && <AudioPlayer audioContent={audioContent} />}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="book-stage">
       <div className={`book-open${flipping ? ' page-flip-enter' : ''}`}>
         {/* LEFT PAGE */}
         <div className="page page-left">
-          {isCover ? (
-            <CoverLeftPage title={title} genre={genre} totalChapters={totalPages} />
-          ) : (
-            <ChapterTextPage chapter={chapter} pageNum={page * 2 - 1} />
-          )}
+            <ChapterTextPage chapter={chapter} pageNum={page * 2 +1} />
         </div>
 
         {/* SPINE */}
@@ -37,23 +77,21 @@ export default function OpenBook({ story }) {
 
         {/* RIGHT PAGE */}
         <div className="page page-right">
-          {isCover ? (
-            <CoverRightPage coverImageUrl={coverImageUrl} title={title} />
-          ) : (
-            <ChapterImagePage chapter={chapter} pageNum={page * 2} />
-          )}
+            <ChapterImagePage chapter={chapter} pageNum={page * 2 +2} />
         </div>
       </div>
 
       {/* Nav */}
       <div className="nav-controls">
-        <button className="nav-btn" onClick={() => turnPage(-1)} disabled={page === 0}>
+        <button className="nav-btn" 
+        onClick={() => page === 0 ? (setPage(-1), setOpened(false)) : turnPage(-1)}>
           ‹
         </button>
         <div className="nav-page-info">
-          {isCover ? 'Cover' : `Ch. ${page} of ${totalPages}`}
+          {isCover ? 'Cover' : `Ch. ${page+1} of ${totalPages}`}
         </div>
-        <button className="nav-btn" onClick={() => turnPage(1)} disabled={page === totalPages}>
+        <button className="nav-btn" 
+        onClick={() => page === totalPages-1 ? (setPage(-1), setOpened(false)) : turnPage(1)}>
           ›
         </button>
       </div>
