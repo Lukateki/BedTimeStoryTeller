@@ -1,137 +1,91 @@
-# 🍼 Bedtime Story Teller
+# 📖 Bedtime Story Teller
 
-Bedtime Story Teller is a full-stack MERN (without Mongo) web application that generates custom bedtime stories, narrates them using text-to-speech, and generates a corresponding image to illustrate the story — all powered by AI microservices!
+An AI-powered bedtime story generator with an animated book UI, genre-reactive backgrounds, chapter illustrations, and full narration.
 
----
+## Stack
 
-## 🚀 Tech Stack
+- **Frontend**: React 18 + Vite (Vercel)
+- **Story service**: Express + GPT-4o — structured JSON with chapters (port 3001)
+- **Image service**: Express + DALL-E 3 — per-chapter + cover illustrations (port 3003)
+- **TTS service**: Express + OpenAI TTS — full story narration (port 3002)
+- **Orchestration**: Docker Compose (local) / Render (production)
 
-![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=for-the-badge)
-![Vercel](https://img.shields.io/badge/Vercel-Frontend-blue?logo=vercel&logoColor=white&style=for-the-badge)
-![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white&style=for-the-badge)
-![Render](https://img.shields.io/badge/Render-Backend-blueviolet?logo=render&logoColor=white&style=for-the-badge)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-brightgreen?logo=openai&logoColor=white&style=for-the-badge)
-![Google Cloud](https://img.shields.io/badge/Google%20Cloud-TTS-yellow?logo=googlecloud&logoColor=white&style=for-the-badge)
-
-
-<div align="center">
-  
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="40" alt="React" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" height="40" alt="Vite" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="40" alt="Docker" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" height="40" alt="Node.js" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="40" alt="JavaScript" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" height="40" alt="Google Cloud" />
-  <img src="https://custom.typingmind.com/assets/models/gpt-35.webp" height="40" alt="OpenAI" />
-  <img src="https://raw.githubusercontent.com/devicons/devicon/develop/icons/vercel/vercel-original.svg" height="40" alt="Vercel" />
-  
-</div>
-
-
-- **Frontend**: React (Vite) <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="20" alt="React" /><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" height="20" alt="Vite" />
-- **Backend Services** (Microservices Architecture):<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" height="20" alt="Node.js" />
-  - Story Generation: OpenAI GPT-3.5 API <img src="https://custom.typingmind.com/assets/models/gpt-35.webp" height="20" alt="OpenAI" />
-  - Text-to-Speech: Google Cloud TTS API <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" height="20" alt="Google Cloud" />
-  - Image Generation: OpenAI DALL-E API <img src="https://custom.typingmind.com/assets/models/gpt-35.webp" height="20" alt="OpenAI" />
-- **Containerization**: Docker <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="20" alt="Docker" />
-- **Orchestration**: Docker Compose <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="20" alt="Docker" />
-- **Deployment**:
-  - Backend: Render 
-  - Frontend: Vercel <img src="https://raw.githubusercontent.com/devicons/devicon/develop/icons/vercel/vercel-original.svg" height="20" alt="Vercel" />
-
----
-
-## ✨ Features
-
-| Feature                  | Description |
-|:-------------------------|:------------|
-| 🚀 Story Generation | Generate creative bedtime stories using OpenAI |
-| 🎤 Audio Narration | Convert stories into audio (Google Cloud TTS) |
-| 🎨 Image Illustration | Generate images with DALL-E for each story |
-| 🛠 Microservice Architecture | Each service independently containerized |
-| 🐳 Dockerized Deployment | Easy local orchestration with Docker Compose |
-| 🌎 Fully Deployed | Backend on Render, Frontend on Vercel |
-
----
-
-## 🧩 Project Structure
+## Quick Start
 
 ```bash
-bedtime-story-teller/
-├── services/
-│   ├── story-service/       # OpenAI GPT-3.5 service
-│   ├── tts-service/          # Google Cloud Text To Speech service
-│   └── image-service/        # OpenAI DALL-E service
-├── frontend/                 # React Vite frontend
-├── docker-compose.yml        # Service orchestration (locally)
-└── README.md
-```
+# 1. Copy and fill in your API key
+cp .env.example .env
+# edit .env → OPENAI_API_KEY=sk-...
 
----
-
-## 🛡️ Environment Variables
-
-Each microservice uses its own .env file:
-
-#### Story Service (`story-service/.env`):
-```
-OPENAI_API_KEY=your-openai-api-key
-PORT=3001
-```
-
-#### Text To Speech Service (`tts-service/.env`):
-```
-OPENAI_API_KEY=your-openai-api-key
-PORT=3002
-```
-
-#### Image Service (`image-service/.env`):
-```
-OPENAI_API_KEY=your-openai-api-key
-PORT=3003
-```
-
-#### Frontend (`frontend/.env`)-Locally:
-```
-VITE_STORY_SERVICE_URL=http://localhost:3001
-VITE_TTS_SERVICE_URL=http://localhost:3002
-VITE_IMAGE_SERVICE_URL=http://localhost:3003
-```
-
----
-
-## 📦 How to Run Locally
-
-After Cloning the repo:
-```
-# Navigate to repo
-cd bedtime-story-teller
-
-# Start services
+# 2. Start all backend services
 docker-compose up --build
 
-# Start frontend (On another terminal)
+# 3. Start frontend (separate terminal)
 cd frontend
+cp .env.example .env
 npm install
 npm run dev
-
+# → http://localhost:5173
 ```
 
----
+## Without Docker
 
-## 🏁 Deployment Notes
+```bash
+# Terminal 1 — story service
+cd services/story-service && npm install
+echo "OPENAI_API_KEY=sk-..." > .env
+npm start
 
-#### Backend (Render):
+# Terminal 2 — image service
+cd services/image-service && npm install
+echo "OPENAI_API_KEY=sk-..." > .env
+npm start
 
-- Each microservice deployed separately.
-- Environment variables configured per service.
-- Dockerfile used for each service.
+# Terminal 3 — TTS service
+cd services/tts-service && npm install
+echo "OPENAI_API_KEY=sk-..." > .env
+npm start
 
-#### Frontend (Vercel):
+# Terminal 4 — frontend
+cd frontend && npm install && npm run dev
+```
 
-- Environment variables for backend endpoints configured in Vercel dashboard.
+## Deployment
 
----
+**Frontend → Vercel**
+Push frontend/ to GitHub, import to vercel.com, set env vars in dashboard.
 
-Developed with love for my sister, her husband, and their soon to be baby boy.
+**Backend → Render (one service per repo subfolder)**
+- story-service: root dir `services/story-service`, start cmd `npm start`
+- image-service: root dir `services/image-service`, start cmd `npm start`
+- tts-service: root dir `services/tts-service`, start cmd `npm start`
+- Set `OPENAI_API_KEY` as env var in each service
+
+Then update frontend env vars to point at Render URLs.
+
+## Estimated Cost (rare/personal use)
+
+| Call | Cost |
+|------|------|
+| GPT-4o story | ~$0.03–0.06 |
+| DALL-E 3 cover | ~$0.04 |
+| DALL-E 3 × 4 chapters | ~$0.16 |
+| OpenAI TTS (1500 words) | ~$0.12 |
+| **Total per story** | **~$0.35–0.40** |
+
+For a small group using it rarely: **~$5–15/month** max.
+
+## Genre Themes
+
+The background, book color, and narrator voice all shift with genre:
+
+| Genre | Background | Voice |
+|-------|-----------|-------|
+| Fantasy | Deep forest greens + gold | Onyx (deep) |
+| Sci-Fi | Deep space blue ↔ red glow | Echo |
+| Fairy Tale | Purple + gold sparkles | Shimmer |
+| Adventure | Warm amber + earth tones | Alloy |
+| Mystery | Deep navy + muted glow | Alloy |
+| Horror | Blood red on black | Fable |
+| Romance | Deep rose + warm pink | Shimmer |
+| Fable | Forest green + earthy gold | Nova |

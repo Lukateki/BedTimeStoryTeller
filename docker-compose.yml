@@ -1,19 +1,21 @@
-version: '3'
 services:
   story-service:
     build: ./services/story-service
-    ports:
-      - "3001:3001"
-    env_file: ./services/story-service/.env
+    ports: ["3001:3001"]
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PORT=3001
 
   tts-service:
     build: ./services/tts-service
-    ports:
-      - "3002:3002"
-    env_file: ./services/tts-service/.env
+    ports: ["3002:3002"]
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PORT=3002
 
   image-service:
     build: ./services/image-service
-    ports:
-      - "3003:3003"
-    env_file: ./services/image-service/.env
+    ports: ["3003:3003"]
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PORT=3003

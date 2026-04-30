@@ -1,35 +1,58 @@
 require('dotenv').config();
 const express = require('express');
-const axios = require('axios');
 const cors = require('cors');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (req, res) => {
-    res.json({ status: "ok" });
-});
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+// Voice selection based on genre/age for atmosphere
+const VOICE_MAP = {
+  kids:      'nova',     // warm, friendly female
+  fantasy:   'onyx',     // deep, dramatic
+  scifi:     'echo',     // clear, slightly robotic feel
+  fairytale: 'shimmer',  // soft, storytelling
+  horror:    'fable',    // measured, unsettling
+  default:   'alloy',    // neutral, clear
+};
 
 app.post('/text-to-speech', async (req, res) => {
-    const { text } = req.body;
-    try {
-        const response = await axios.post(
-            `https://texttospeech.googleapis.com/v1/text:synthesize?key=${process.env.GOOGLE_API_KEY}`,
-            {
-                input: { text },
-                voice: { languageCode: "en-US", ssmlGender: "FEMALE" },
-                audioConfig: { audioEncoding: "MP3" }
-            }
-        );
+  const { text, genre = 'default', ageGroup = 'kids' } = req.body;
 
-        const audioContent = response.data.audioContent;
-        res.json({ audioContent });
-    } catch (error) {
-        console.error(error.response?.data || error.message);
-        res.status(500).json({ error: "Failed to synthesize speech" });
+  const voice = ageGroup === 'kids' ? VOICE_MAP.kids : (VOICE_MAP[genre] || VOICE_MAP.default);
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'tts-1',
+        input: text,
+        voice,
+        response_format: 'mp3',
+        speed: ageGroup === 'kids' ? 0.9 : 1.0,  // slightly slower for kids
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'TTS error');
     }
+
+    // Return as base64 so frontend can play directly
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = Buffer.from(arrayBuffer).toString('base64');
+    res.json({ audioContent: base64, voice });
+  } catch (error) {
+    console.error('TTS error:', error.message);
+    res.status(500).json({ error: 'Failed to synthesize speech', details: error.message });
+  }
 });
 
 const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => console.log(`TTS service listening on port ${PORT}`));
+app.listen(PORT, () => console.log(`TTS service on port ${PORT}`));

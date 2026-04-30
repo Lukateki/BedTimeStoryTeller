@@ -1,64 +1,104 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import ResultDisplay from './ResultDisplay';
+import React, { useState } from 'react'
+import { getGenres, LENGTHS } from '../utils/genres'
 
-function StoryForm() {
-  const [prompt, setPrompt] = useState('');
-  const [story, setStory] = useState('');
-  const [audioContent, setAudioContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [loading, setLoading] = useState(false);
+export default function StoryForm({ onGenerate, loading, genre, onGenreChange }) {
+  const [prompt,   setPrompt]   = useState('')
+  const [ageGroup, setAgeGroup] = useState('kids')
+  const [length,   setLength]   = useState('medium')
 
-  const handleGenerate = async () => {
-    setLoading(true);
-    try {
-      // 1. Generate Story
-      const storyRes = await axios.post(`${import.meta.env.VITE_STORY_SERVICE_URL}/generate-story`, { prompt });
-      setStory(storyRes.data.story);
+  const availableGenres = getGenres(ageGroup)
 
-      // 2. Generate Audio
-      const audioRes = await axios.post(`${import.meta.env.VITE_TTS_SERVICE_URL}/text-to-speech`, { text: storyRes.data.story });
-      setAudioContent(audioRes.data.audioContent);
-
-      // 3. Generate Image
-      const imageRes = await axios.post(`${import.meta.env.VITE_IMAGE_SERVICE_URL}/generate-image`, { prompt });
-      setImageUrl(imageRes.data.imageUrl);
-
-    } catch (error) {
-      console.error(error);
-      alert('Something went wrong. Check console.');
+  // If current genre becomes unavailable (kids mode), reset it
+  const handleAgeChange = (age) => {
+    setAgeGroup(age)
+    if (age === 'kids') {
+      const genres = getGenres('kids')
+      if (!genres.find(g => g.id === genre)) onGenreChange('fantasy')
     }
-    setLoading(false);
-  };
+  }
+
+  const handleSubmit = () => {
+    if (!prompt.trim() || loading) return
+    onGenerate({ prompt, genre, ageGroup, length })
+  }
 
   return (
-    <div>
-      <div className="flex flex-col gap-4">
-        <input
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter a story idea..."
-          className="p-2 border rounded-md"
-        />
-        <button
-          onClick={handleGenerate}
-          disabled={loading}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md"
-        >
-          {loading ? "Generating..." : "Generate Story"}
-        </button>
+    <div className="prompt-scene">
+      <div>
+        <div className="app-title">BEDTIME<br />STORIES</div>
+        <div className="app-subtitle"><br/>powered by imagination & AI</div>
       </div>
 
-      {story && (
-        <ResultDisplay
-          story={story}
-          audioContent={audioContent}
-          imageUrl={imageUrl}
-        />
-      )}
-    </div>
-  );
-}
+      <div className="form-card">
+        {/* Age group */}
+        <div className="form-group">
+          <div className="form-label">For whom?</div>
+          <div className="age-toggle">
+            {[{id:'kids',label:'👶 Children'},{id:'adults',label:'🌙 Adults'}].map(a => (
+              <button key={a.id} className={`age-btn${ageGroup===a.id?' active':''}`}
+                onClick={() => handleAgeChange(a.id)}>
+                {a.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-export default StoryForm;
+        {/* Genre */}
+        <div className="form-group">
+          <div className="form-label">Genre</div>
+          <div className="genre-grid">
+            {availableGenres.map(g => (
+              <button key={g.id}
+                className={`genre-btn${genre===g.id?' active':''}`}
+                onClick={() => onGenreChange(g.id)}>
+                <span className="genre-emoji">{g.emoji}</span>
+                {g.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Prompt */}
+        <div className="form-group">
+          <div className="form-label">Story idea</div>
+          <input
+            className="form-input"
+            type="text"
+            placeholder={
+              ageGroup === 'kids'
+                ? 'e.g. a brave bunny who finds a magic carrot…'
+                : 'e.g. a knight who falls in love with a dragon…'
+            }
+            value={prompt}
+            onChange={e => setPrompt(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+          />
+        </div>
+
+        {/* Length */}
+        <div className="form-group">
+          <div className="form-label">Length</div>
+          <div className="form-row">
+            {LENGTHS.map(l => (
+              <button key={l.id}
+                className={`genre-btn${length===l.id?' active':''}`}
+                style={{ flex: 1 }}
+                onClick={() => setLength(l.id)}>
+                <span style={{fontSize:'12px',fontWeight:600}}>{l.label}</span>
+                <span style={{fontSize:'10px',opacity:0.6}}>{l.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          className="generate-btn"
+          onClick={handleSubmit}
+          disabled={!prompt.trim() || loading}
+        >
+          {loading ? 'Creating…' : 'Tell Me a Story'}
+        </button>
+      </div>
+    </div>
+  )
+}
