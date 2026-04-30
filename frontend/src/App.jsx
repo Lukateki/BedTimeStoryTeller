@@ -27,7 +27,7 @@ export default function App() {
       {/* Top bar — only shown when reading */}
       {status === 'ready' && story && (
         <div className="top-bar">
-          <div className="top-bar-title">✦ BEDTIME STORIES</div>
+          <div className="top-bar-title">✦ The Mystical Book of Nimbus ✦</div>
           <button className="new-story-btn" onClick={reset}>
             ← New Story
           </button>

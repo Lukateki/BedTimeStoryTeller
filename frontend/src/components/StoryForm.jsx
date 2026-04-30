@@ -25,8 +25,8 @@ export default function StoryForm({ onGenerate, loading, genre, onGenreChange })
   return (
     <div className="prompt-scene">
       <div>
-        <div className="app-title">BEDTIME<br />STORIES</div>
-        <div className="app-subtitle"><br/>powered by imagination & AI</div>
+        <div className="app-title">The Mystical<br />Book of Nimbus</div>
+        <div className="app-subtitle"><br/><br/>powered by imagination & AI</div>
       </div>
 
       <div className="form-card">
