@@ -476,107 +476,109 @@ export default function OpenBook({ story }) {
   const hideRightPage = flip && (spread === LAST || destSpread === LAST)
 
   return (
-    <div className="book-viewport">
-      <div
-        className={[
-          'book3d',
-          stageState,
-          dragging ? 'is-dragging' : '',
-          hideLeftPage ? 'hide-left-page' : '',
-          hideRightPage ? 'hide-right-page' : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        ref={stageRef}
-        onPointerDown={onPointerDown}
-        onClick={() => {
-          if (!flip && !pointer.current) {
-            // tapping a closed book opens / re-opens it
-            if (isClosed) go(1)
-            else if (isEnd) go(-1)
-          }
-        }}
-        role="application"
-        aria-label={`${title} — interactive storybook`}
-      >
-        {/* back board — gives the open book physical depth */}
-        <div className="book-board" />
+    <>
+      <div className="book-viewport">
+        <div
+          className={[
+            'book3d',
+            stageState,
+            dragging ? 'is-dragging' : '',
+            hideLeftPage ? 'hide-left-page' : '',
+            hideRightPage ? 'hide-right-page' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          ref={stageRef}
+          onPointerDown={onPointerDown}
+          onClick={() => {
+            if (!flip && !pointer.current) {
+              // tapping a closed book opens / re-opens it
+              if (isClosed) go(1)
+              else if (isEnd) go(-1)
+            }
+          }}
+          role="application"
+          aria-label={`${title} — interactive storybook`}
+        >
+          {/* back board — gives the open book physical depth */}
+          <div className="book-board" />
 
-        {/* fixed spread underneath */}
-        <div className="spread">
-          <div className="page page-left">{leftContent}</div>
-          <div className="spine" />
-          <div className="page page-right">{rightContent}</div>
+          {/* fixed spread underneath */}
+          <div className="spread">
+            <div className="page page-left">{leftContent}</div>
+            <div className="spine" />
+            <div className="page page-right">{rightContent}</div>
+          </div>
+
+          {/* the single flipping leaf */}
+          {flip && (
+            <div
+              ref={leafRef}
+              className={[
+                'flip-leaf',
+                flip.mode === 'anim' ? 'flip-leaf-anim' : '',
+                leafIsCover ? 'flip-leaf-cover' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              style={{ transform: `rotateY(${leafRot}deg)` }}
+              onTransitionEnd={handleLeafTransitionEnd}
+            >
+              <div className="flip-face flip-front">
+                {/* render the visible face only — Chrome's backface culling is
+                    unreliable for nested content (especially images), so we
+                    explicitly drop the content of whichever face is turned
+                    away from the viewer */}
+                {!pastHalf && leafFront}
+                <div
+                  className="leaf-gloss leaf-gloss-front"
+                  style={{ opacity: gloss * 0.5 }}
+                />
+              </div>
+              <div className="flip-face flip-back">
+                {pastHalf && leafBack}
+                <div
+                  className="leaf-gloss leaf-gloss-back"
+                  style={{ opacity: gloss * 0.5 }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* shadow the turning leaf casts into the gutter */}
+          {flip && (
+            <div className="gutter-shadow" style={{ opacity: gloss * 0.32 }} />
+          )}
         </div>
 
-        {/* the single flipping leaf */}
-        {flip && (
-          <div
-            ref={leafRef}
-            className={[
-              'flip-leaf',
-              flip.mode === 'anim' ? 'flip-leaf-anim' : '',
-              leafIsCover ? 'flip-leaf-cover' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            style={{ transform: `rotateY(${leafRot}deg)` }}
-            onTransitionEnd={handleLeafTransitionEnd}
-          >
-            <div className="flip-face flip-front">
-              {/* render the visible face only — Chrome's backface culling is
-                  unreliable for nested content (especially images), so we
-                  explicitly drop the content of whichever face is turned
-                  away from the viewer */}
-              {!pastHalf && leafFront}
-              <div
-                className="leaf-gloss leaf-gloss-front"
-                style={{ opacity: gloss * 0.5 }}
-              />
+        {/* navigation */}
+        {!isClosed && (
+          <div className="nav-controls">
+            <button
+              className="nav-btn"
+              onClick={() => go(-1)}
+              disabled={!canBack || busy}
+              aria-label="Previous page"
+            >
+              ‹
+            </button>
+            <div className="nav-page-info">
+              {isEnd ? 'The End' : `Chapter ${spread} of ${total}`}
             </div>
-            <div className="flip-face flip-back">
-              {pastHalf && leafBack}
-              <div
-                className="leaf-gloss leaf-gloss-back"
-                style={{ opacity: gloss * 0.5 }}
-              />
-            </div>
+            <button
+              className="nav-btn"
+              onClick={() => go(1)}
+              disabled={!canForward || busy}
+              aria-label="Next page"
+            >
+              ›
+            </button>
           </div>
-        )}
-
-        {/* shadow the turning leaf casts into the gutter */}
-        {flip && (
-          <div className="gutter-shadow" style={{ opacity: gloss * 0.32 }} />
         )}
       </div>
-
-      {/* navigation */}
-      {!isClosed && (
-        <div className="nav-controls">
-          <button
-            className="nav-btn"
-            onClick={() => go(-1)}
-            disabled={!canBack || busy}
-            aria-label="Previous page"
-          >
-            ‹
-          </button>
-          <div className="nav-page-info">
-            {isEnd ? 'The End' : `Chapter ${spread} of ${total}`}
-          </div>
-          <button
-            className="nav-btn"
-            onClick={() => go(1)}
-            disabled={!canForward || busy}
-            aria-label="Next page"
-          >
-            ›
-          </button>
-        </div>
-      )}
-
       {audioContent && <AudioPlayer audioContent={audioContent} />}
-    </div>
+    </>
+    
   )
 }
 
